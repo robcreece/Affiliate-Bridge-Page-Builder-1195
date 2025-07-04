@@ -5,7 +5,7 @@ import { useBridgePage } from '../context/BridgePageContext';
 import SafeIcon from '../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
 
-const { FiLink, FiSearch, FiArrowRight, FiAlertCircle, FiCheckCircle, FiLoader, FiTarget } = FiIcons;
+const { FiLink, FiSearch, FiArrowRight, FiAlertCircle, FiCheckCircle, FiLoader, FiTarget, FiZap, FiCpu } = FiIcons;
 
 const URLAnalyzer = () => {
   const [url, setUrl] = useState('');
@@ -30,7 +30,7 @@ const URLAnalyzer = () => {
     setIsAnalyzing(true);
     setError('');
 
-    // Simulate analysis (in real app, this would call your analysis API)
+    // Simulate analysis with enhanced visual feedback
     setTimeout(() => {
       const mockAnalysis = {
         url,
@@ -60,19 +60,19 @@ const URLAnalyzer = () => {
       };
 
       setAnalysisData(mockAnalysis);
-      
+
       // Generate bridge page content based on analysis
       const bridgeContent = generateBridgeContent(mockAnalysis);
       updateBridgePageData(bridgeContent);
-      
+
       setIsAnalyzing(false);
       navigate('/builder');
-    }, 3000);
+    }, 4000);
   };
 
   const generateBridgeContent = (analysis) => {
     const headlines = {
-      'urgent-confident': `WARNING: This ${analysis.bigIdea.split(' ')[0]} Method Is About To Change Everything...`,
+      'urgent-confident': `⚡ WARNING: This ${analysis.bigIdea.split(' ')[0]} Method Is About To Change Everything...`,
       'friendly-expert': `The Smart Way to ${analysis.bigIdea}`,
       'authority-direct': `How I Discovered ${analysis.bigIdea}`
     };
@@ -104,30 +104,47 @@ const URLAnalyzer = () => {
     };
   };
 
+  const analysisSteps = [
+    { label: 'Connecting to URL...', icon: FiLink, delay: 0 },
+    { label: 'Extracting content...', icon: FiSearch, delay: 800 },
+    { label: 'Analyzing psychology...', icon: FiCpu, delay: 1600 },
+    { label: 'Generating bridge content...', icon: FiZap, delay: 2400 },
+    { label: 'Optimizing conversion elements...', icon: FiTarget, delay: 3200 }
+  ];
+
   return (
     <div className="max-w-4xl mx-auto">
+      {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
         className="text-center mb-12"
       >
-        <h2 className="text-4xl font-bold text-gray-900 mb-4 font-heading">
+        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <SafeIcon icon={FiTarget} className="w-8 h-8 text-white" />
+        </div>
+
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Analyze Any Sales Page
-        </h2>
-        <p className="text-xl text-gray-600 font-body">
-          Enter the URL of the product you want to promote and we'll analyze it to create your perfect bridge page
+        </h1>
+        
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          Enter the URL of the product you want to promote and our AI will analyze it to create your perfect bridge page with optimized copy and conversion elements.
         </p>
       </motion.div>
 
+      {/* Main Analysis Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="bg-white rounded-2xl shadow-xl p-8"
+        transition={{ delay: 0.2, duration: 0.6 }}
+        className="bg-white rounded-2xl shadow-xl p-8 mb-8"
       >
         <div className="space-y-6">
+          {/* URL Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 font-body">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Sales Page URL
             </label>
             <div className="relative">
@@ -140,38 +157,45 @@ const URLAnalyzer = () => {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://example.com/sales-page"
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-body"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={isAnalyzing}
               />
             </div>
+            
             {error && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
                 className="mt-2 flex items-center space-x-2 text-red-600"
               >
                 <SafeIcon icon={FiAlertCircle} className="w-4 h-4" />
-                <span className="text-sm font-body">{error}</span>
+                <span className="text-sm">{error}</span>
               </motion.div>
             )}
           </div>
 
+          {/* Analyze Button */}
           <motion.button
             onClick={analyzeURL}
             disabled={isAnalyzing}
             whileHover={{ scale: isAnalyzing ? 1 : 1.02 }}
             whileTap={{ scale: isAnalyzing ? 1 : 0.98 }}
             className={`w-full py-4 px-6 rounded-lg font-semibold text-white transition-all duration-300 ${
-              isAnalyzing
-                ? 'bg-gray-400 cursor-not-allowed'
+              isAnalyzing 
+                ? 'bg-gray-400 cursor-not-allowed' 
                 : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg hover:shadow-xl'
             }`}
           >
             <div className="flex items-center justify-center space-x-2">
               {isAnalyzing ? (
                 <>
-                  <SafeIcon icon={FiLoader} className="w-5 h-5 animate-spin" />
-                  <span>Analyzing Sales Page...</span>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <SafeIcon icon={FiLoader} className="w-5 h-5" />
+                  </motion.div>
+                  <span className="loading-dots">Analyzing Sales Page</span>
                 </>
               ) : (
                 <>
@@ -184,6 +208,7 @@ const URLAnalyzer = () => {
           </motion.button>
         </div>
 
+        {/* Analysis Progress */}
         {isAnalyzing && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -191,58 +216,69 @@ const URLAnalyzer = () => {
             className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200"
           >
             <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <SafeIcon icon={FiCheckCircle} className="w-5 h-5 text-green-500" />
-                <span className="text-sm font-body">Extracting headline and offer details...</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <SafeIcon icon={FiLoader} className="w-5 h-5 text-blue-500 animate-spin" />
-                <span className="text-sm font-body">Analyzing pain points and benefits...</span>
-              </div>
-              <div className="flex items-center space-x-2 opacity-50">
-                <SafeIcon icon={FiLoader} className="w-5 h-5 text-gray-400" />
-                <span className="text-sm font-body">Generating bridge page content...</span>
-              </div>
+              {analysisSteps.map((step, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: step.delay / 1000, duration: 0.4 }}
+                  className="flex items-center space-x-3"
+                >
+                  <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                    <SafeIcon icon={step.icon} className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="text-sm text-gray-700">
+                    {step.label}
+                  </span>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         )}
       </motion.div>
 
+      {/* Feature Cards */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="mt-12 grid md:grid-cols-3 gap-6"
+        transition={{ delay: 0.4, duration: 0.6 }}
+        className="grid md:grid-cols-3 gap-6"
       >
         {[
           {
             title: 'Smart Analysis',
-            description: 'AI-powered analysis of sales pages to extract key conversion elements',
-            icon: FiSearch
+            description: 'AI-powered analysis of sales pages to extract key conversion elements and psychological triggers',
+            icon: FiSearch,
+            color: 'blue'
           },
           {
             title: 'Proven Templates',
-            description: 'High-converting bridge page templates based on successful campaigns',
-            icon: FiTarget
+            description: 'High-converting bridge page templates based on successful campaigns and industry best practices',
+            icon: FiTarget,
+            color: 'purple'
           },
           {
-            title: 'Bonus Generation',
-            description: 'Automatic bonus ideas to increase your affiliate conversion rates',
-            icon: FiCheckCircle
+            title: 'Instant Generation',
+            description: 'Automatically generate compelling copy, bonuses, and conversion elements in seconds',
+            icon: FiZap,
+            color: 'green'
           }
         ].map((feature, index) => (
           <motion.div
             key={index}
             whileHover={{ y: -5 }}
-            className="bg-white rounded-xl p-6 shadow-lg"
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="bg-white rounded-xl shadow-lg p-6 border border-gray-100"
           >
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-4">
+            <div className={`w-12 h-12 bg-${feature.color}-500 rounded-lg flex items-center justify-center mb-4`}>
               <SafeIcon icon={feature.icon} className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2 font-heading">
+            
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
               {feature.title}
             </h3>
-            <p className="text-gray-600 font-body">
+            
+            <p className="text-gray-600">
               {feature.description}
             </p>
           </motion.div>

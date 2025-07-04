@@ -9,7 +9,6 @@ const { FiMessageCircle, FiChevronLeft, FiChevronRight, FiX } = FiIcons;
 
 const EnhancedFeedbackButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
   // Check if user has interacted with feedback before
@@ -21,7 +20,6 @@ const EnhancedFeedbackButton = () => {
   }, []);
 
   const EventTracking = () => {
-    // Enhanced tracking with more context
     const trackingData = {
       timestamp: Date.now(),
       page: window.location.pathname,
@@ -34,8 +32,6 @@ const EnhancedFeedbackButton = () => {
     };
 
     console.log('Feedback button clicked', trackingData);
-    
-    // Store interaction in localStorage
     localStorage.setItem('feedbackHistory', JSON.stringify(trackingData));
   };
 
@@ -49,71 +45,52 @@ const EnhancedFeedbackButton = () => {
     setIsOpen(false);
   };
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
-
   return (
     <>
       {/* Floating Feedback Button */}
-      <motion.div
-        className="fixed top-1/2 -translate-y-1/2 z-50"
+      <motion.button
+        onClick={handleToggle}
         initial={{ opacity: 0, x: 50 }}
-        animate={{ 
-          opacity: 1, 
-          x: 0,
-          right: isHovered ? '0px' : '-40px'
-        }}
+        animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3, delay: 1 }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        style={{ right: '-40px' }}
+        whileHover={{ scale: 1.05, x: -5 }}
+        whileTap={{ scale: 0.95 }}
+        className="fixed top-1/2 -translate-y-1/2 right-4 z-50 flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold text-sm rounded-l-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+        style={{
+          transform: 'rotate(270deg)',
+          transformOrigin: 'center',
+          right: hasInteracted ? '16px' : '-20px'
+        }}
       >
-        <motion.button
-          onClick={handleToggle}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-2 px-3 py-2 text-white font-semibold text-sm rounded-l-md transition-all duration-300 shadow-lg hover:shadow-xl"
-          style={{
-            background: `linear-gradient(135deg, ${questConfig.PRIMARY_COLOR} 0%, #1e40af 100%)`,
-            transform: 'rotate(270deg)',
-            transformOrigin: 'center'
-          }}
-        >
-          <div 
-            className="w-fit h-fit transition-all duration-300"
-            style={{ transform: 'rotate(90deg)' }}
-          >
-            <SafeIcon 
-              icon={isOpen ? FiX : FiMessageCircle} 
-              className="w-4 h-4" 
-            />
-          </div>
-          <span className="whitespace-nowrap">
-            {isOpen ? 'Close' : 'Feedback'}
-          </span>
-        </motion.button>
+        <div className="w-fit h-fit transition-all duration-300" 
+             style={{ transform: 'rotate(90deg)' }}>
+          <SafeIcon 
+            icon={isOpen ? FiX : FiMessageCircle} 
+            className="w-4 h-4" 
+          />
+        </div>
+        <span className="whitespace-nowrap">
+          {isOpen ? 'Close' : 'Feedback'}
+        </span>
 
-        {/* Tooltip for first-time users */}
-        {!hasInteracted && isHovered && (
+        {/* Pulse effect for new users */}
+        {!hasInteracted && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="absolute top-1/2 -translate-y-1/2 right-full mr-2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap"
-            style={{ transform: 'translateY(-50%) rotate(0deg)' }}
-          >
-            Share your thoughts!
-            <div className="absolute left-full top-1/2 -translate-y-1/2 border-4 border-transparent border-l-gray-900"></div>
-          </motion.div>
+            className="absolute inset-0 bg-blue-400 rounded-l-lg"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.7, 0, 0.7]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
         )}
-      </motion.div>
+      </motion.button>
 
-      {/* Feedback Workflow Modal */}
+      {/* Feedback Modal */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -128,7 +105,7 @@ const EnhancedFeedbackButton = () => {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3 }}
               className="relative max-w-md w-full"
               onClick={(e) => e.stopPropagation()}
             >
@@ -141,10 +118,9 @@ const EnhancedFeedbackButton = () => {
                 styleConfig={{
                   primaryColor: questConfig.PRIMARY_COLOR,
                   backgroundColor: '#ffffff',
-                  borderRadius: '16px',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                  fontFamily: 'Inter, sans-serif',
-                  maxWidth: '400px'
+                  borderRadius: '12px',
+                  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                  fontFamily: 'Inter, sans-serif'
                 }}
               >
                 <FeedbackWorkflow.ThankYou />
